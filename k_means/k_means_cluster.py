@@ -49,28 +49,55 @@ data_dict.pop("TOTAL", 0)
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
 poi  = "poi"
-features_list = [poi, feature_1, feature_2]
+features_list = [poi, feature_1, feature_2 ]
 data = featureFormat(data_dict, features_list )
 poi, finance_features = targetFeatureSplit( data )
 
-
+sal = []
+eso = []
+for i in range(len(finance_features)):
+    eso.append(finance_features[i][1])
+    sal.append(finance_features[i][0])
+'''
 ### in the "clustering with 3 features" part of the mini-project,
 ### you'll want to change this line to 
 ### for f1, f2, _ in finance_features:
 ### (as it's currently written, the line below assumes 2 features)
-for f1, f2 in finance_features:
-    plt.scatter( f1, f2 )
+for f1, f2 , f3 in finance_features:
+    plt.scatter( f1, f2 , f3)
 plt.show()
 
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
-
-
-
+from sklearn.cluster import KMeans
+kmeans = KMeans(n_clusters = 2)
+kmeans.fit(finance_features)
+pred = kmeans.predict(finance_features)
 
 ### rename the "name" parameter when you change the number of features
 ### so that the figure gets saved to a different file
 try:
-    Draw(pred, finance_features, poi, mark_poi=False, name="clusters.pdf", f1_name=feature_1, f2_name=feature_2)
+    Draw(pred, finance_features, poi, mark_poi=False, name="clusters_inc_fea.pdf", f1_name=feature_1, f2_name=feature_2)
 except NameError:
     print "no predictions object named pred found, no clusters to plot"
+
+# eso = []
+# for i in data_dict:
+#     if(data_dict[i]["salary"] != "NaN"):
+#         eso.append(data_dict[i]["salary"])
+
+# print max(eso) , min(eso)
+'''
+eso = numpy.array(eso)
+sal = numpy.array(sal)
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+scaler_eso = MinMaxScaler()
+res_salary = scaler.fit_transform(sal)
+res_eso = scaler_eso.fit_transform(eso)
+q = numpy.array([[200000.0],[0.0]])
+u = numpy.array([[1000000.0],[0.0]])
+print(scaler.transform(q))
+
+print(scaler_eso.transform(u))
